@@ -43,7 +43,7 @@ import JobDetailsScreen from "../Screens/provider/ServiceProviderScreens/JobDeta
 // import NotificationScreen from "../Screens/User_DashBoardScreens/NotificationScreen";
 import JobDetails from "../Screens/provider/JobDetails";
 // import EmployerProfile from "../Screens/ProviderScreens/EmployerProfile";
-// import SendOffer from "../Screens/ProviderScreens/SendOfffer";
+import SendOffer from "../Screens/provider/ServiceProviderScreens/SendOfffer.jsx";
 import ProviderProposal from "../Screens/provider/ProviderProposal";
 // import BookingScreen from "../Screens/User_DashBoardScreens/BookingScreen";
 
@@ -94,7 +94,7 @@ export default function StackNavigation() {
           {/* <Stack.Screen name="Notification" component={NotificationScreen} /> */}
           <Stack.Screen name="JobDetail" component={JobDetails} />
           {/* <Stack.Screen name="EmployerProfile" component={EmployerProfile} /> */}
-          {/* <Stack.Screen name="SendOFfer" component={SendOffer} /> */}
+          <Stack.Screen name="SendOFfer" component={SendOffer} />
           <Stack.Screen name="ProviderProposal" component={ProviderProposal} />
           {/* <Stack.Screen name="Booking" component={BookingScreen} /> */}
         </Stack.Navigator>

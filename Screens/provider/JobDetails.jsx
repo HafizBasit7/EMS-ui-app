@@ -146,7 +146,7 @@ const JobDetails = () => {
       {/* Bottom Button */}
       <TouchableOpacity
         style={styles.sendOfferBtn}
-        onPress={() => navigation.navigate("SendOffer")}
+        onPress={() => navigation.navigate("SendOFfer")}
       >
         <Text style={styles.sendOfferText}>Send an Offer</Text>
       </TouchableOpacity>

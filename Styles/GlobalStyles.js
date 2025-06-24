@@ -1,0 +1,20 @@
+export const GlobalStyles = {
+  colors: {
+    ButtonColor: "#FF7235",
+    borderColor: "#FF7235",
+    LinkColor: "#FF7235",
+    HeadingColor: "#293032",
+    ChipColor: "#FFF2E3",
+    StarIconColor: "#EFD700",
+    BoxColor: "#FFF2E3",
+    IconsColor: "#FF7235",
+    textColor: "#000000",
+    chipColor: "#FFF2E3",
+    cardBackground: "#FFF2E3",
+    grayColour: "#7C7C7C",
+    ProgressBar: "#FF7235",
+    hashTags: "#FF7235",
+    cardBackgroundColor: "#FF7235",
+    MultiCards: "#FFF2E3",
+  },
+};

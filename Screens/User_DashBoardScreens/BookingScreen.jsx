@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,39 +7,82 @@ import {
   Dimensions,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { GlobalStyles } from "../../Styles/GlobalStyles";
-import BookingVerticalCard from "../../CustomComponents/Cards/BookingVerticalCards";
 import { bookingData } from "../../dummydata/dummydata";
+import BookingVerticalCard from "../../CustomComponents/Cards/BookingVerticalCards"; // ⬅️ customer‑side card
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
+/**
+ * BookingScreen — UI‑only
+ * Shows different layouts depending on `userType` ("Customer" vs "Provider").
+ * Toggle the constant below in your demo or connect it to auth state later.
+ */
 export default function BookingScreen() {
-  /* ----------------------- state ----------------------- */
-  const [activeTab, setActiveTab] = useState("ongoing");
+  // 🔄  Toggle to "Customer" / "Provider" to preview both UIs
+  const userType = "Customer"; // « change this and watch the card layout switch »
+
+  /* -------------------------------- state -------------------------------- */
+  const [activeTab, setActiveTab] = useState("Ongoing");
+  const [filteredBookings, setFilteredBookings] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [dateShow, setDateShow] = useState(false);
   const [date, setDate] = useState(new Date());
 
-  /* ----------------- pull-to-refresh ------------------- */
+  const navigation = useNavigation();
+
+  /* ---------------------------- helper filter ---------------------------- */
+  const filterBookings = useCallback(() => {
+    const byStatus = bookingData.filter(
+      (b) => b.status.toLowerCase() === activeTab.toLowerCase()
+    );
+    setFilteredBookings(byStatus);
+  }, [activeTab]);
+
+  useEffect(() => {
+    filterBookings();
+  }, [activeTab, filterBookings]);
+
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 600);
+    setTimeout(() => {
+      filterBookings();
+      setRefreshing(false);
+    }, 600);
   };
 
-  /* ------------- filter list by tab status ------------- */
-  const filteredList = bookingData
-    .filter((b) => b.status === activeTab)
-    // Add unique index to each item to prevent duplicate keys
-    .map((item, index) => ({ ...item, uniqueId: `${item.phoneNumber}-${index}` }));
+  /* ------------------------------- render -------------------------------- */
+  const renderProviderCard = (item) => (
+    <View style={styles.card}>
+      <View style={styles.cardRow}>
+        <View style={styles.infoColumn}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.phone}>+{item.phoneNumber}</Text>
+          <Text style={styles.dateTimeLabel}>Date & Time</Text>
+          <Text style={styles.dateTimeValue}>{item.date + "\n" + item.time}</Text>
+        </View>
+        <Image source={{ uri: item.image }} style={styles.image} />
+      </View>
 
-  /* ------------------------ ui ------------------------ */
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.cancelBtn}>
+          <Text style={styles.cancelTxt}>Cancel Booking</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.viewBtn}>
+          <Text style={styles.viewTxt}>View Job</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      {/* header */}
+      {/* ---------- header ---------- */}
       <View style={styles.headingRow}>
         <Text style={styles.heading}>Bookings</Text>
         <TouchableOpacity
@@ -50,55 +93,46 @@ export default function BookingScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* tabs */}
+      {/* ---------- tabs ---------- */}
       <View style={styles.tabsRow}>
-        {["ongoing", "past"].map((tab) => (
+        {["Ongoing", "Past"].map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[styles.tab, activeTab === tab && styles.activeTab]}
             onPress={() => setActiveTab(tab)}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </Text>
+            <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}> {tab} </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* list or empty-state */}
-      {filteredList.length === 0 ? (
+      {/* ---------- list ---------- */}
+      {filteredBookings.length === 0 ? (
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyTxt}>Oops! Nothing Found!</Text>
         </View>
       ) : (
-        <View style={styles.listContainer}>
-          <FlatList
-            data={filteredList}
-            keyExtractor={(item) => item.uniqueId}
-          renderItem={({ item }) => {
-  console.log("Rendering item:", item.name);
-  return <BookingVerticalCard data={item} tab={activeTab} />;
-}}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              <View style={styles.emptyWrap}>
-                <Text style={styles.emptyTxt}>No bookings found</Text>
-              </View>
-            }
-          />
-        </View>
+        <FlatList
+          data={filteredBookings}
+          keyExtractor={(item, idx) => `${item.phoneNumber}-${idx}`}
+          renderItem={({ item }) =>
+            userType === "Provider"
+              ? renderProviderCard(item)
+              : (
+                  <BookingVerticalCard
+                    data={item}
+                    tab={activeTab}
+                    // navigation={navigation}
+                  />
+                )
+          }
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          contentContainerStyle={styles.listContent}
+        />
       )}
 
-      {/* calendar picker */}
+      {/* ---------- calendar ---------- */}
       {dateShow && (
         <DateTimePicker
           value={date}
@@ -114,19 +148,18 @@ export default function BookingScreen() {
   );
 }
 
-/* ---------------------- styles ---------------------- */
+/* -------------------------------- styles -------------------------------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 12,
+    padding: 16,
   },
   headingRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: "3%",
-    marginBottom: 10,
+    paddingTop: "10%",
   },
   heading: {
     fontSize: 30,
@@ -142,8 +175,9 @@ const styles = StyleSheet.create({
   tabsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: height * 0.015,
-    marginBottom: 10,
+    marginBottom: height * 0.01,
+    backgroundColor: "#fff",
+    paddingVertical: height * 0.01,
   },
   tab: {
     width: width * 0.4,
@@ -152,32 +186,84 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
   },
-  activeTab: { backgroundColor: GlobalStyles.colors.ButtonColor },
+  activeTab: {
+    backgroundColor: GlobalStyles.colors.ButtonColor,
+  },
   tabText: {
     fontSize: width * 0.04,
     color: GlobalStyles.colors.LinkColor,
     fontFamily: "Poppins-Regular",
   },
-  activeTabText: { 
-    color: "#fff", 
-    fontFamily: "Poppins-SemiBold" 
+  activeTabText: {
+    color: "#fff",
+    fontFamily: "Poppins-SemiBold",
   },
-  listContainer: {
-    flex: 1,  // This makes the list take up all available space
-  },
-  listContent: {
-    paddingBottom: 20,
-    flexGrow: 1,  // Important for empty states
-  },
-  emptyWrap: { 
-    flex: 1,
-    justifyContent: "center", 
-    alignItems: "center",
-    paddingVertical: 40,
-  },
+  /* ---------- empty ---------- */
+  listContent: { paddingBottom: 20 },
+  emptyWrap: { flex: 1, justifyContent: "center", alignItems: "center" },
   emptyTxt: {
     fontSize: 17,
     fontFamily: "Poppins-SemiBold",
     color: GlobalStyles.colors.ButtonColor,
+  },
+  /* ---------- provider card styles ---------- */
+  card: {
+    backgroundColor: "#fff",
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  infoColumn: { flex: 1 },
+  name: { fontFamily: "Poppins-Medium", fontSize: 16, color: "#293032" },
+  phone: { fontFamily: "Poppins-Regular", fontSize: 12, color: "gray" },
+  dateTimeLabel: {
+    marginTop: 8,
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
+    color: "#555",
+  },
+  dateTimeValue: {
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
+    color: "#000",
+  },
+  image: { width: 70, height: 70, borderRadius: 8, marginLeft: 12 },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 12,
+  },
+  cancelBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: "#FFE8E8",
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  cancelTxt: {
+    textAlign: "center",
+    color: "#FF4B4B",
+    fontFamily: "Poppins-Medium",
+  },
+  viewBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: GlobalStyles.colors.ButtonColor,
+    borderRadius: 8,
+  },
+  viewTxt: {
+    textAlign: "center",
+    color: "#fff",
+    fontFamily: "Poppins-Medium",
   },
 });

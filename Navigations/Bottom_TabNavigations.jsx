@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookingScreen from "../Screens/User_DashBoardScreens/BookingScreen.jsx";
 import HomeScreen from "../Screens/User_DashBoardScreens/HomeScreen.jsx";
 import InboxScreen from "../Screens/User_DashBoardScreens/InboxScreen.jsx";
-// import ProfileScreen from "../Screens/User_DashBoardScreens/ProfileScreen.jsx";
+import ProfileScreen from "../Screens/User_DashBoardScreens/ProfileScreen.jsx";
 // import MyJobScreen from "../Screens/User_DashBoardScreens/MyJobsScreens";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { GlobalStyles } from "../Styles/GlobalStyles";
@@ -17,7 +17,7 @@ const Tab = createBottomTabNavigator();
 
 // Mock user data - replace this with your actual user management
 const MOCK_USER = {
-  type: "provider", // Change to "Provider" to test provider flow
+  type: "Customer", // Change to "Provider" to test provider flow
   profilePicture: "https://example.com/profile.jpg" // Replace with default or mock image
 };
 
@@ -88,7 +88,7 @@ export default function TabNavigation() {
       
       <Tab.Screen name="Bookings" component={BookingScreen} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

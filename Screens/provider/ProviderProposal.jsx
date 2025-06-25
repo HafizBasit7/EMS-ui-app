@@ -31,7 +31,7 @@ const ProviderProposal = () => {
           </View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("EmployerProfile", { userId: "mockId" })}
+            onPress={() => navigation.navigate("ProviderProfile", { userId: "mockId" })}
           >
             <Text style={styles.buttonText}>View Profile</Text>
           </TouchableOpacity>

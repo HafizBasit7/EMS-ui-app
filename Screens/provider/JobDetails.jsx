@@ -1,262 +1,319 @@
+/* ------------------------------------------------------------------
+   JobDetails (UI-only)
+   – no axios / redux / tokens
+   – user type switch: const USER_TYPE = 'Customer' | 'Provider'
+------------------------------------------------------------------- */
+
 import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
+  FlatList,
   Image,
   TouchableOpacity,
-  ScrollView,
   Modal,
-  Dimensions,
+  ScrollView,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MapSVG from "../../assets/SVG/MapSVG.svg";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import LineHead from "../../CustomComponents/LineHead";
+import CustomButton from "../../CustomComponents/CustomButton";
 import ClockSVG from "../../assets/SVG/ClockSVG.svg";
 import CalendarSVG from "../../assets/SVG/CalendarSVG.svg";
 import DollarSVG from "../../assets/SVG/DollarSVG.svg";
-import { useNavigation } from "@react-navigation/native";
+import MapSVG from "../../assets/SVG/MapSVG.svg";
 
-const screenWidth = Dimensions.get("window").width;
+/* ─── change this to 'Provider' to test provider view ─── */
+const USER_TYPE = "Customer"; // or "Provider"
+
+/* ─── dummy job & proposal data ─── */
+const DUMMY_JOB = {
+  _id: "job-1",
+  title: "Birthday Decoration Needed",
+  description:
+    "Looking for a creative decorator to set up a birthday party for my 6-year-old daughter at home. Theme: unicorn & pastel colours. Need balloons, backdrop, cake table décor and basic lighting.",
+  minBudget: 200,
+  maxBudget: 350,
+  EventDate: new Date().toISOString(),
+  location: { address: "123 Main Street, New York" },
+  servicesRequired: [{ _id: "1", name: "Decoration" }],
+  referencePictureUrls: [
+    "https://images.pexels.com/photos/2072181/pexels-photo-2072181.jpeg",
+    "https://images.pexels.com/photos/587741/pexels-photo-587741.jpeg",
+  ],
+  user: {
+    _id: "user-1",
+    fullname: "Sofia Carter",
+    profilePicUrl:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500",
+  },
+};
+
+const DUMMY_PROPOSALS = [
+  {
+    proposalId: "prop-1",
+    price: 320,
+    dateOfProposal: new Date().toISOString(),
+    provider: {
+      fullname: "John Anderson",
+      profilePicUrl:
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=240",
+      avgRating: 4.8,
+    },
+  },
+  {
+    proposalId: "prop-2",
+    price: 280,
+    dateOfProposal: new Date().toISOString(),
+    provider: {
+      fullname: "Jane Smith",
+      profilePicUrl:
+        "https://plus.unsplash.com/premium_photo-1671656349218-5218444643d8?w=240",
+      avgRating: 4.5,
+    },
+  },
+];
 
 const JobDetails = () => {
   const navigation = useNavigation();
   const [showFullText, setShowFullText] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const job = {
-    title: "Birthday Decoration Required",
-    date: "18th December 2024 – 3:30PM",
-    location: "NewYork, USA",
-    description:
-      "Mollit in laborum tempor Lorem incididunt irure. Aute eu ex ad sunt. Pariatur sint culpa do incididunt eiusmod eiusmod culpa. laborum tempor Lorem incididunt.Pariatur sint culpa do incididunt eiusmod eiusmod culpa. laborum tempor Lorem incididunt.",
-    tags: ["#balloons", "#Cake", "#Decoration", "#Cake", "#Decoration", "#Catering"],
-    minBudget: 200,
-    maxBudget: 220,
-    images: [
-      "https://via.placeholder.com/100/FFDF00",
-      "https://via.placeholder.com/100/0000FF",
-      "https://via.placeholder.com/100/808080",
-    ],
-    user: {
-      name: "Jane Cooper",
-      rating: 4.8,
-      profilePicUrl: "https://via.placeholder.com/30",
-    },
-  };
-
+  /* ─── handlers ─── */
   const handleImageClick = (uri) => setSelectedImage(uri);
-  const handleCloseModal = () => setSelectedImage(null);
+  const closeModal = () => setSelectedImage(null);
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Ionicons name="chevron-back" size={24} />
-        <Text style={styles.headerTitle}>Job Details</Text>
-        <View style={{ width: 24 }} /> {/* Placeholder for alignment */}
-      </View>
+  /* ─── render proposal card ─── */
+  const renderProposal = ({ item }) => (
+    <View style={styles.cardContainer}>
+      <View style={styles.Newcard}>
+        <Image source={{ uri: item.provider.profilePicUrl }} style={styles.cardProfileImage} />
 
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scroll}>
-        {/* User Info */}
-        <View style={styles.profileRow}>
-          <View style={styles.profileInfo}>
-            <Image source={{ uri: job.user.profilePicUrl }} style={styles.profileImage} />
-            <Text style={styles.byText}>by {job.user.name}</Text>
-            <Ionicons name="star" size={14} color="#FFCC00" />
-            <Text style={styles.ratingText}>{job.user.rating}</Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.viewProfileButton}
-            onPress={() => navigation.navigate("EmployerProfile")}
-          >
-            <Text style={styles.viewProfileText}>View profile</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Title */}
-        <Text style={styles.title}>{job.title}</Text>
-
-        {/* Info Icons */}
-        <View style={styles.infoRow}>
-          <View style={styles.infoItem}>
-            <MapSVG width={12} height={12} />
-            <Text style={styles.infoText}>New York</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <CalendarSVG width={12} height={12} />
-            <Text style={styles.infoText}>1 day</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <ClockSVG width={12} height={12} />
-            <Text style={styles.infoText}>29 min ago</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <DollarSVG width={12} height={12} />
-            <Text style={styles.priceText}>${job.minBudget}–{job.maxBudget}</Text>
-          </View>
-        </View>
-
-        {/* Description */}
-        <Text style={styles.description}>
-          {showFullText ? job.description : job.description.slice(0, 150) + "..."}
-          <Text
-            style={styles.seeMoreText}
-            onPress={() => setShowFullText(!showFullText)}
-          >
-            {showFullText ? " See less" : " See more"}
+        <View style={styles.cardTextContainer}>
+          <Text style={styles.cardText}>Offer: ${item.price}</Text>
+          <Text style={styles.cardText2}>by {item.provider.fullname}</Text>
+          <Text style={styles.cardText3}>
+            Offer received {new Date(item.dateOfProposal).toLocaleDateString()}
           </Text>
-        </Text>
 
-        {/* Tags */}
-        <View style={styles.tagsContainer}>
-          {job.tags.map((tag, index) => (
-            <Text style={styles.tag} key={index}>
-              {tag}
-            </Text>
-          ))}
-        </View>
-
-        {/* Job Date & Address */}
-        <Text style={styles.detailTitle}>Job Needed on:</Text>
-        <Text style={styles.detailText}>{job.date}</Text>
-        <Text style={styles.detailTitle}>Address:</Text>
-        <Text style={styles.detailText}>{job.location}</Text>
-
-        {/* Images */}
-        <View style={styles.imageRow}>
-          {job.images.map((uri, index) => (
-            <TouchableOpacity key={`${uri}-${index}`} onPress={() => handleImageClick(uri)}>
-              <Image source={{ uri }} style={styles.image} />
+          <View style={styles.cardButtonContainer}>
+            <TouchableOpacity
+              style={styles.cardButton2}
+              onPress={() => navigation.navigate("MessageScreen", { id: item.provider.fullname })}
+            >
+              <Text style={styles.cardButtonText2}>Send Message</Text>
             </TouchableOpacity>
-          ))}
-          <View style={styles.moreImages}>
-            <Text style={styles.moreImagesText}>+2</Text>
+
+            <TouchableOpacity
+              style={styles.cardButton}
+              onPress={() =>
+                navigation.navigate("ProviderProposal", { proposalId: item.proposalId })
+              }
+            >
+              <Text style={styles.cardButtonText}>View Proposal</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
 
-      {/* Modal for full-screen image */}
-      <Modal visible={selectedImage !== null} transparent animationType="fade">
-        <TouchableOpacity style={styles.modalOverlay} onPress={handleCloseModal}>
-          <Image source={{ uri: selectedImage }} style={styles.enlargedImage} />
-        </TouchableOpacity>
-      </Modal>
-
-      {/* Bottom Button */}
-      <TouchableOpacity
-        style={styles.sendOfferBtn}
-        onPress={() => navigation.navigate("SendOFfer")}
-      >
-        <Text style={styles.sendOfferText}>Send an Offer</Text>
-      </TouchableOpacity>
+        <View style={styles.cardRating}>
+          <Icon name="star" size={16} color="gold" />
+          <Text style={styles.cardRatingText}>
+            {item.provider.avgRating ?? "N/A"}
+          </Text>
+        </View>
+      </View>
     </View>
+  );
+
+  /* ─── render ─── */
+  return (
+    <>
+      <LineHead headerName="Job Details" headerState />
+
+      <View style={{ paddingTop: USER_TYPE === "Provider" ? "15%" : "25%" }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* ───── CUSTOMER PROFILE (when provider views) ───── */}
+          {USER_TYPE === "Provider" && (
+            <View style={styles.container}>
+              <View style={styles.profileSection}>
+                <Image source={{ uri: DUMMY_JOB.user.profilePicUrl }} style={styles.profileImage} />
+                <Text style={styles.userName}>by {DUMMY_JOB.user.fullname}</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("EmployerProfile", { userId: DUMMY_JOB.user._id })}
+              >
+                <Text style={styles.buttonText}>View Profile</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* ───── JOB INFO ───── */}
+          <View style={styles.newContainer}>
+            <Text style={styles.heading}>{DUMMY_JOB.title}</Text>
+
+            <View style={styles.iconsRow}>
+              <Info icon={<MapSVG width={12} height={12} />} text={DUMMY_JOB.location.address} />
+              <Info
+                icon={<CalendarSVG width={12} height={12} />}
+                text={new Date(DUMMY_JOB.EventDate).toDateString()}
+              />
+              <Info icon={<ClockSVG width={12} height={12} />} text="Posted now" />
+              <Info
+                icon={<DollarSVG width={12} height={12} />}
+                text={`${DUMMY_JOB.minBudget}-${DUMMY_JOB.maxBudget}`}
+                bold
+              />
+            </View>
+
+            {/* description */}
+            <Text style={styles.descriptionText}>
+              {showFullText ? DUMMY_JOB.description : DUMMY_JOB.description.slice(0, 140)}
+              {DUMMY_JOB.description.length > 140 && (
+                <Text style={styles.seeMoreText} onPress={() => setShowFullText(!showFullText)}>
+                  {showFullText ? "  See less" : " ...See more"}
+                </Text>
+              )}
+            </Text>
+
+            {/* tags */}
+            <View style={styles.textRow}>
+              {DUMMY_JOB.servicesRequired.map((srv) => (
+                <Text key={srv._id} style={styles.textItem}>
+                  #{srv.name}
+                </Text>
+              ))}
+            </View>
+
+            {/* extra details + reference pictures */}
+            <View style={styles.newTextContainer}>
+              <Detail label="Job Needed on:" value={new Date(DUMMY_JOB.EventDate).toLocaleString()} />
+              <Detail label="Address:" value={DUMMY_JOB.location.address} />
+
+              <FlatList
+                data={DUMMY_JOB.referencePictureUrls}
+                keyExtractor={(u) => u}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleImageClick(item)}>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+
+          {/* image modal */}
+          <Modal visible={!!selectedImage} transparent animationType="fade">
+            <TouchableOpacity style={styles.modalOverlay} onPress={closeModal}>
+              <Image source={{ uri: selectedImage }} style={styles.enlargedImage} />
+            </TouchableOpacity>
+          </Modal>
+
+          {/* ───── PROPOSALS (customer) or SEND OFFER (provider) ───── */}
+          {USER_TYPE === "Customer" ? (
+            <>
+              <Text style={styles.lastHeading}>Proposals ({DUMMY_PROPOSALS.length})</Text>
+              {DUMMY_PROPOSALS.length === 0 ? (
+                <Text style={styles.noDataText}>No proposals available</Text>
+              ) : (
+                <FlatList
+                  data={DUMMY_PROPOSALS}
+                  keyExtractor={(item) => item.proposalId}
+                  renderItem={renderProposal}
+                  scrollEnabled={false}
+                  contentContainerStyle={{ paddingBottom: 40 }}
+                />
+              )}
+            </>
+          ) : (
+            <View style={styles.offerWrap}>
+              <CustomButton
+                title="Send Offer"
+                onPress={() => navigation.navigate("SendOFfer", { jobId: DUMMY_JOB._id })}
+              />
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </>
   );
 };
 
+/* ─── small reusable sub-components ─── */
+const Info = ({ icon, text, bold }) => (
+  <View style={styles.iconItem}>
+    {icon}
+    <Text style={[styles.iconText, bold && styles.iconTextBold]} numberOfLines={1}>
+      {"  "}
+      {text}
+    </Text>
+  </View>
+);
+const Detail = ({ label, value }) => (
+  <View style={styles.row}>
+    <Text style={styles.newTextItem}>{label}</Text>
+    <Text style={styles.newTextItemBold}>{value}</Text>
+  </View>
+);
+
+/* ─── styles (kept from your original) ─── */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  headerTitle: { fontSize: 16, fontWeight: "bold" },
-  profileRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  profileInfo: { flexDirection: "row", alignItems: "center", gap: 6 },
-  profileImage: { width: 30, height: 30, borderRadius: 15 },
-  byText: { fontSize: 12, color: "#333" },
-  ratingText: { fontSize: 12 },
-  viewProfileButton: {
-    borderColor: "#FF7235",
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    borderRadius: 15,
-  },
-  viewProfileText: { fontSize: 12, color: "#FF7235", fontWeight: "bold" },
-  title: { fontSize: 18, fontWeight: "bold", marginTop: 16, color: "#000" },
-  infoRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 12,
-    alignItems: "center",
-  },
-  infoItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  infoText: { fontSize: 12, color: "#909090" },
-  priceText: { fontSize: 12, fontWeight: "bold", color: "#FF7235" },
-  description: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 12,
-    lineHeight: 20,
-  },
-  seeMoreText: { color: "#FF7235", fontWeight: "bold" },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
-    gap: 8,
-  },
-  tag: {
-    fontSize: 12,
-    color: "#FF7235",
-    backgroundColor: "#FFE0D2",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-  },
-  detailTitle: {
-    marginTop: 16,
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  detailText: { fontSize: 14, color: "#000", marginTop: 2 },
-  imageRow: {
-    flexDirection: "row",
-    marginTop: 12,
-    gap: 10,
-    alignItems: "center",
-  },
-  image: { width: 60, height: 60, borderRadius: 8 },
-  moreImages: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: "#D9D9D9",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  moreImagesText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  enlargedImage: { width: screenWidth - 40, height: screenWidth - 40 },
-  sendOfferBtn: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: "#FF7235",
-    paddingVertical: 14,
-    borderRadius: 30,
-    alignItems: "center",
-  },
-  sendOfferText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  container: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 20, marginTop: "5%" },
+  profileSection: { flexDirection: "row", alignItems: "center" },
+  profileImage: { width: 30, height: 30, borderRadius: 20, marginRight: 8 },
+  userName: { fontSize: 14, fontWeight: "700" },
+  button: { borderWidth: 1, borderColor: "#FF7235", borderRadius: 15, paddingVertical: "3%", paddingHorizontal: "6%" },
+  buttonText: { color: "#FF7235", fontSize: 14, fontWeight: "bold" },
+
+  newContainer: { padding: 20, marginTop: -20 },
+  heading: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
+
+  iconsRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+  iconItem: { flexDirection: "row", alignItems: "center", flex: 1 },
+  iconText: { fontSize: 12, color: "#909090" },
+  iconTextBold: { color: "#333", fontWeight: "bold" },
+
+  descriptionText: { fontSize: 14, color: "#333", lineHeight: 20 },
+  seeMoreText: { fontSize: 14, color: "#FF7235", fontWeight: "bold" },
+
+  textRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginVertical: 10 },
+  textItem: { fontSize: 12, backgroundColor: "#FFE0D2", color: "#FF7235", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
+
+  newTextContainer: { marginTop: 10 },
+  row: { flexDirection: "row", marginBottom: 8 },
+  newTextItem: { fontSize: 14, color: "#555" },
+  newTextItemBold: { fontSize: 14, color: "#333", fontWeight: "bold", flexShrink: 1 },
+
+  image: { width: 100, height: 100, marginRight: 10, borderRadius: 8 },
+
+  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.7)" },
+  enlargedImage: { width: 300, height: 300 },
+
+  lastHeading: { fontSize: 18, marginLeft: 20, marginTop: 20, fontWeight: "600" },
+  noDataText: { textAlign: "center", color: "#FF7235", marginTop: 20 },
+
+  /* proposal cards */
+  cardContainer: { paddingHorizontal: 20, marginTop: 10 },
+  Newcard: { flexDirection: "row", alignItems: "center", padding: 15, borderWidth: 1, borderColor: "#ddd", borderRadius: 10 },
+  cardProfileImage: { width: 70, height: 70, borderRadius: 35 },
+  cardTextContainer: { flex: 1, marginLeft: 10 },
+  cardText: { fontSize: 12, fontWeight: "bold" },
+  cardText2: { fontSize: 12 },
+  cardText3: { fontSize: 12, color: "#909090" },
+  cardRating: { flexDirection: "row", alignItems: "center" },
+  cardRatingText: { marginLeft: 4, fontSize: 12 },
+
+  cardButtonContainer: { flexDirection: "row", marginTop: 10 },
+  cardButton: { backgroundColor: "#FF7235", paddingVertical: 3, paddingHorizontal: 10, borderRadius: 10, marginHorizontal: 4 },
+  cardButtonText: { color: "#fff", fontSize: 12 },
+  cardButton2: { borderWidth: 1, borderColor: "#FF7235", paddingVertical: 3, paddingHorizontal: 10, borderRadius: 10, marginHorizontal: 4 },
+  cardButtonText2: { color: "#FF7235", fontSize: 12 },
+
+  offerWrap: { width: "80%", alignSelf: "center", marginTop: 60 },
 });
 
 export default JobDetails;

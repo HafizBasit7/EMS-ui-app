@@ -5,6 +5,7 @@ export const dummyHorizontalData = [
   ];
 
   export const dummyVerticalData = [
+    
     { 
         id: '1', 
         name: 'John Doe', 
@@ -101,6 +102,34 @@ export const DropDownData =  [
   ];
 
   export const bookingData = [
+  {
+    name: "Alice Johnson",
+    status: "Past",
+    phoneNumber: "123-456-7890",
+    category: ["birthday", "celebration"],
+    date: "26 Nov, Thursday",
+    time: "2:30 PM - 3:00 PM",
+    image: "https://media.istockphoto.com/id/1347005975/photo/portrait-of-a-serious-muslim-young-man-looking-at-camera.jpg"
+  },
+//   {
+//     name: "Bob Smith",
+//     status: "past",
+//     phoneNumber: "234-567-8901",
+//     category: ["wedding", "celebration"],
+//     date: "27 Nov, Friday",
+//     time: "4:00 PM - 4:30 PM",
+//     image: "https://media.istockphoto.com/id/1311957094/photo/handsome-smiling-young-man-with-crossed-arms-portrait.jpg"
+//   },
+//   {
+//     name: "Sana Malik",
+//     status: "ongoing",
+//     phoneNumber: "111-222-3333",
+//     category: ["photography"],
+//     date: "28 Nov, Saturday",
+//     time: "5:00 PM - 5:30 PM",
+//     image: "https://media.istockphoto.com/id/1321235678/photo/young-happy-woman.jpg"
+//   },
+
     {
         name: "Alice Johnson",
         status: "past",
@@ -119,15 +148,15 @@ export const DropDownData =  [
         time: "4:00 PM - 4:30 PM",
         image: "https://media.istockphoto.com/id/1311957094/photo/handsome-smiling-young-man-with-crossed-arms-portrait.jpg?s=612x612&w=0&k=20&c=zALF0xV8gL-W9IooXcbEE95aejQhYYkBslwjPMqlUxA="
     },
-    {
-        name: "Catherine Lee",
-        phoneNumber: "345-678-9012",
-        status: "past",
-        category: ["corporate", "meeting"],
-        date: "28 Nov, Saturday",
-        time: "1:00 PM - 1:30 PM",
-        image: "https://s3-alpha-sig.figma.com/img/56d1/8ec7/d0dcde6b3504dc6950f179d3a77e1f4f?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bE8BsaK4tjyFUR12wvG7T8st61CljGek6PyYu~~AztChSkLX43RQ4cYwPpayjgTKE0uD-~VHvpWCbdYh5yPbK78Nb85lOnR9U0cdBTGc9lsP9TamyDP5BDjh4WNWi~oKS4k84qjCd9TBB1k934PSn~XpBdJvjWjBcqA8PNLtBsXUhGPkZP9rWaQP4s4jUke2t7WNaYCu7xWKByjS1sXyjjofiiFv~Gbf2LXUSgKQEoZ0h-7uGnZTdC13w7P3-5g13m~Wr35VQd0QQ70KADkc0vtNWfBA72yB8H-9pjtIpBSQSwqn3E5bBevjB7NfuRgt90jwcnpv6uIPXqyIuHfdWg__"
-    },
+    // {
+    //     name: "Catherine Lee",
+    //     phoneNumber: "345-678-9012",
+    //     status: "past",
+    //     category: ["corporate", "meeting"],
+    //     date: "28 Nov, Saturday",
+    //     time: "1:00 PM - 1:30 PM",
+    //     image: "https://s3-alpha-sig.figma.com/img/56d1/8ec7/d0dcde6b3504dc6950f179d3a77e1f4f?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bE8BsaK4tjyFUR12wvG7T8st61CljGek6PyYu~~AztChSkLX43RQ4cYwPpayjgTKE0uD-~VHvpWCbdYh5yPbK78Nb85lOnR9U0cdBTGc9lsP9TamyDP5BDjh4WNWi~oKS4k84qjCd9TBB1k934PSn~XpBdJvjWjBcqA8PNLtBsXUhGPkZP9rWaQP4s4jUke2t7WNaYCu7xWKByjS1sXyjjofiiFv~Gbf2LXUSgKQEoZ0h-7uGnZTdC13w7P3-5g13m~Wr35VQd0QQ70KADkc0vtNWfBA72yB8H-9pjtIpBSQSwqn3E5bBevjB7NfuRgt90jwcnpv6uIPXqyIuHfdWg__"
+    // },
     {
         name: "David Brown",
         status: "past",
@@ -182,15 +211,15 @@ export const DropDownData =  [
         time: "3:30 PM - 4:00 PM",
         image: "https://media.istockphoto.com/id/1322494070/photo/happy-woman-inhaling-at-home.jpg?s=612x612&w=0&k=20&c=3TbhFLDpdfXvugkXggKUt09B8HEPSlNEDQ79VPDP-Mc="
     },
-    {
-        name: "Jack Miller",
-        status: "ongoing", 
-        phoneNumber: "012-345-6789",
-        category: ["celebration", "party"],
-        date: "5 Dec, Saturday",
-        time: "7:00 PM - 7:30 PM",
-        image: "https://s3-alpha-sig.figma.com/img/56d1/8ec7/d0dcde6b3504dc6950f179d3a77e1f4f?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bE8BsaK4tjyFUR12wvG7T8st61CljGek6PyYu~~AztChSkLX43RQ4cYwPpayjgTKE0uD-~VHvpWCbdYh5yPbK78Nb85lOnR9U0cdBTGc9lsP9TamyDP5BDjh4WNWi~oKS4k84qjCd9TBB1k934PSn~XpBdJvjWjBcqA8PNLtBsXUhGPkZP9rWaQP4s4jUke2t7WNaYCu7xWKByjS1sXyjjofiiFv~Gbf2LXUSgKQEoZ0h-7uGnZTdC13w7P3-5g13m~Wr35VQd0QQ70KADkc0vtNWfBA72yB8H-9pjtIpBSQSwqn3E5bBevjB7NfuRgt90jwcnpv6uIPXqyIuHfdWg__"
-    }
+    // {
+    //     name: "Jack Miller",
+    //     status: "ongoing", 
+    //     phoneNumber: "012-345-6789",
+    //     category: ["celebration", "party"],
+    //     date: "5 Dec, Saturday",
+    //     time: "7:00 PM - 7:30 PM",
+    //     image: "https://s3-alpha-sig.figma.com/img/56d1/8ec7/d0dcde6b3504dc6950f179d3a77e1f4f?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bE8BsaK4tjyFUR12wvG7T8st61CljGek6PyYu~~AztChSkLX43RQ4cYwPpayjgTKE0uD-~VHvpWCbdYh5yPbK78Nb85lOnR9U0cdBTGc9lsP9TamyDP5BDjh4WNWi~oKS4k84qjCd9TBB1k934PSn~XpBdJvjWjBcqA8PNLtBsXUhGPkZP9rWaQP4s4jUke2t7WNaYCu7xWKByjS1sXyjjofiiFv~Gbf2LXUSgKQEoZ0h-7uGnZTdC13w7P3-5g13m~Wr35VQd0QQ70KADkc0vtNWfBA72yB8H-9pjtIpBSQSwqn3E5bBevjB7NfuRgt90jwcnpv6uIPXqyIuHfdWg__"
+    // }
 ];
 
 export const messageCardsData = [

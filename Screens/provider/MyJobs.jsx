@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    marginTop: "10%",
+    marginTop: "3%",
   },
   headingContainer: {
     flexDirection: "row",

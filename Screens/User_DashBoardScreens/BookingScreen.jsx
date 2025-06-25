@@ -1,173 +1,112 @@
+import React, { useState } from "react";
 import {
-  Text,
   View,
+  Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   FlatList,
   RefreshControl,
-  Platform,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { GlobalStyles } from "../../Styles/GlobalStyles";
-import { useCallback, useEffect, useState } from "react";
-const { width, height } = Dimensions.get("window");
 import BookingVerticalCard from "../../CustomComponents/Cards/BookingVerticalCards";
 import { bookingData } from "../../dummydata/dummydata";
-import { ActivityIndicator } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+const { width, height } = Dimensions.get("window");
+
 export default function BookingScreen() {
-  const [activeTab, setActiveTab] = useState("Ongoing");
-  const [loading, setLoading] = useState(false);
-  const [BookingData, setBookingData] = useState([]);
+  /* ----------------------- state ----------------------- */
+  const [activeTab, setActiveTab] = useState("ongoing");
   const [refreshing, setRefreshing] = useState(false);
   const [dateShow, setDateShow] = useState(false);
-  const [date, setdate] = useState(new Date());
-  const [pageIndex, setPageIndex] = useState(1);
-  const [tpage, setpage] = useState(1);
+  const [date, setDate] = useState(new Date());
 
-  const onRefresh = useCallback(() => {
+  /* ----------------- pull-to-refresh ------------------- */
+  const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setPageIndex(1);
-      fetchBookings();
-    }, 500);
-  }, []);
-
-  const fetchBookings = () => {
-    setLoading(true);
-    setBookingData([]);
-    setTimeout(() => {
-      const filteredData = bookingData.filter((item) =>
-        activeTab === "Ongoing" ? item.status === "ongoing" : item.status === "past"
-      );
-      setBookingData(filteredData);
-      setpage(1); // only one page of dummy data
-      setLoading(false);
-    }, 1000);
+    setTimeout(() => setRefreshing(false), 600);
   };
 
-  useEffect(() => {
-    fetchBookings();
-  }, [activeTab]);
+  /* ------------- filter list by tab status ------------- */
+  const filteredList = bookingData
+    .filter((b) => b.status === activeTab)
+    // Add unique index to each item to prevent duplicate keys
+    .map((item, index) => ({ ...item, uniqueId: `${item.phoneNumber}-${index}` }));
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-
+  /* ------------------------ ui ------------------------ */
   return (
     <View style={styles.container}>
-      <View style={styles.headingContainerRow}>
-        <Text style={styles.headingText}>Bookings</Text>
+      {/* header */}
+      <View style={styles.headingRow}>
+        <Text style={styles.heading}>Bookings</Text>
         <TouchableOpacity
-          style={{
-            borderRadius: 10,
-            padding: 3,
-            borderWidth: 1,
-            borderColor: "#DDDAE1",
-          }}
+          style={styles.calendarButton}
           onPress={() => setDateShow(true)}
         >
-          <Icon name="calendar-month-outline" size={30} color="black" />
+          <Icon name="calendar-month-outline" size={30} color="#000" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Ongoing" && styles.activeTab]}
-          onPress={() => handleTabChange("Ongoing")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "Ongoing" && styles.activeTabText,
-            ]}
+      {/* tabs */}
+      <View style={styles.tabsRow}>
+        {["ongoing", "past"].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.activeTab]}
+            onPress={() => setActiveTab(tab)}
           >
-            Ongoing
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Past" && styles.activeTab]}
-          onPress={() => handleTabChange("Past")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "Past" && styles.activeTabText,
-            ]}
-          >
-            Past
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
+              ]}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {loading ? (
-        <View style={{ justifyContent: "center", alignItems: "center", top: "30%" }}>
-          <ActivityIndicator
-            size="large"
-            color={GlobalStyles.colors.ButtonColor}
-          />
+      {/* list or empty-state */}
+      {filteredList.length === 0 ? (
+        <View style={styles.emptyWrap}>
+          <Text style={styles.emptyTxt}>Oops! Nothing Found!</Text>
         </View>
-      ) : BookingData.length === 0 ? (
-        <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+      ) : (
+        <View style={styles.listContainer}>
           <FlatList
-            contentContainerStyle={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            style={{ width: "100%" }}
-            data={[{ name: "Oops! Nothing Found!", _id: 55 }]}
-            renderItem={({ item }) => (
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 17,
-                  fontFamily: "Poppins-SemiBold",
-                  color: GlobalStyles.colors.ButtonColor,
-                }}
-              >
-                {item.name}
-              </Text>
-            )}
-            keyExtractor={(item) => item._id.toString()}
+            data={filteredList}
+            keyExtractor={(item) => item.uniqueId}
+          renderItem={({ item }) => {
+  console.log("Rendering item:", item.name);
+  return <BookingVerticalCard data={item} tab={activeTab} />;
+}}
+            contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            ListEmptyComponent={
+              <View style={styles.emptyWrap}>
+                <Text style={styles.emptyTxt}>No bookings found</Text>
+              </View>
+            }
           />
         </View>
-      ) : (
-        <FlatList
-          data={BookingData}
-          renderItem={({ item }) => (
-            <BookingVerticalCard data={item} tab={activeTab} />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReachedThreshold={0.7}
-          onEndReached={() => {
-            if (pageIndex < tpage) {
-              setPageIndex((prev) => prev + 1);
-              fetchBookings();
-            }
-          }}
-        />
       )}
 
+      {/* calendar picker */}
       {dateShow && (
         <DateTimePicker
           value={date}
           mode="date"
           display="default"
-          onChange={(e, selectedDate) => {
+          onChange={(e, selected) => {
             setDateShow(false);
-            if (selectedDate) setdate(selectedDate);
+            if (selected) setDate(selected);
           }}
         />
       )}
@@ -175,47 +114,70 @@ export default function BookingScreen() {
   );
 }
 
+/* ---------------------- styles ---------------------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-    padding: 16,
+    backgroundColor: "#fff",
+    padding: 12,
   },
-  headingContainerRow: {
+  headingRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: "10%",
+    paddingTop: "3%",
+    marginBottom: 10,
   },
-  headingText: {
+  heading: {
+    fontSize: 30,
     color: "#293032",
     fontFamily: "Poppins-Medium",
-    fontSize: 30,
   },
-  tabsContainer: {
+  calendarButton: {
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: "#DDDAE1",
+  },
+  tabsRow: {
     flexDirection: "row",
-    marginBottom: height * 0.01,
-    width: "100%",
     justifyContent: "space-around",
-    backgroundColor: "#fff",
-    paddingVertical: height * 0.01,
+    paddingVertical: height * 0.015,
+    marginBottom: 10,
   },
   tab: {
     width: width * 0.4,
     paddingVertical: height * 0.02,
     borderRadius: 12,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
   },
-  activeTab: {
-    backgroundColor: GlobalStyles.colors.ButtonColor,
-  },
+  activeTab: { backgroundColor: GlobalStyles.colors.ButtonColor },
   tabText: {
     fontSize: width * 0.04,
     color: GlobalStyles.colors.LinkColor,
+    fontFamily: "Poppins-Regular",
   },
-  activeTabText: {
-    color: "#fff",
+  activeTabText: { 
+    color: "#fff", 
+    fontFamily: "Poppins-SemiBold" 
+  },
+  listContainer: {
+    flex: 1,  // This makes the list take up all available space
+  },
+  listContent: {
+    paddingBottom: 20,
+    flexGrow: 1,  // Important for empty states
+  },
+  emptyWrap: { 
+    flex: 1,
+    justifyContent: "center", 
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+  emptyTxt: {
+    fontSize: 17,
+    fontFamily: "Poppins-SemiBold",
+    color: GlobalStyles.colors.ButtonColor,
   },
 });

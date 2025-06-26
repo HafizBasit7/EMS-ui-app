@@ -28,14 +28,14 @@ import ReviewScreen from "../Screens/User_DashBoardScreens/Reviews";
 import AddNewJob from "../Screens/AddNewJobScreen/AddnewJob";
 import GiveReviewScreen from "../Screens/User_DashBoardScreens/GiveReviewScreen";
 import MessageScreen from "../Screens/common/MessageScreens/MessageScreen";
-// import ChangePassword from "../Screens/provider/ChangePassword";
+import ChangePassword from "../Screens/User_DashBoardScreens/ChangePassword.jsx";
 import EditProfile from "../Screens/User_DashBoardScreens/EditProfile";
-// import NotificationSetting from "../Screens/provider/NotificationSetting";
+import NotificationSetting from "../Screens/User_DashBoardScreens/NotificationSetting";
 import OfferingJob from "../Screens/User_DashBoardScreens/OfferingJob";
-// import TermsScreen from "../Screens/provider/TermsScreen";
+import TermsScreen from "../Screens/User_DashBoardScreens/TermsScreen";
 import PaymentScreen from "../Screens/PaymentScreens/PaymentScreen";
 import PaymentSuccessScreen from "../Screens/PaymentScreens/PaymentSucessScreen";
-// import CreditCardDetailScreen from "../Screens/PaymentScreens/CreditCardDetailScreen";
+import CreditCardDetailScreen from "../Screens/PaymentScreens/CreditCardDetailScreen";
 import AddServiceScreen from "../Screens/ProviderProfile/AddServiceScreen";
 // import EditServiceScreen from "../Screens/ProviderScreens/EditServiceScreen";
 import OfferingJobClicked from "../Screens/provider/ServiceProviderScreens/OfferJobScreen";
@@ -79,14 +79,14 @@ export default function StackNavigation() {
           <Stack.Screen name="AddNewJob" component={AddNewJob} />
           <Stack.Screen name="GaveReview" component={GiveReviewScreen} />
           <Stack.Screen name="MessageScreen" component={MessageScreen} /> 
-          {/* <Stack.Screen name="ChangePassword" component={ChangePassword} /> */}
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
-          {/* <Stack.Screen name="NotificationSetting" component={NotificationSetting} /> */}
+          <Stack.Screen name="Notification_Setting" component={NotificationSetting} />
           <Stack.Screen name="OfferingJob" component={OfferingJob} />
-          {/* <Stack.Screen name="TermsScreen" component={TermsScreen} /> */}
+          <Stack.Screen name="TermScreen" component={TermsScreen} />
           <Stack.Screen name="paymentScreen" component={PaymentScreen} />
           <Stack.Screen name="PaymentConfirmation" component={PaymentSuccessScreen} />
-          {/* <Stack.Screen name="CreditCardDetailScreen" component={CreditCardDetailScreen} /> */}
+          <Stack.Screen name="CreditCard" component={CreditCardDetailScreen} />
           <Stack.Screen name="AddService" component={AddServiceScreen} />
           {/* <Stack.Screen name="EditService" component={EditServiceScreen} /> */}
           <Stack.Screen name="OfferSelectedJob" component={OfferingJobClicked} />

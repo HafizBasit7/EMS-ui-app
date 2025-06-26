@@ -18,18 +18,30 @@ import LogoutSVG from "../../assets/SVG/LogoutSVG.svg";
 import NewBellSVG from "../../assets/SVG/NewBellSVG.svg";
 import { useNavigation } from "@react-navigation/native";
 import { GlobalStyles } from "../../Styles/GlobalStyles";
+import CustomMessageModal from "../../CustomComponents/CustomMessageModal";
+import { CommonActions } from "@react-navigation/native";
 
 const Profile = () => {
   const [isEnabled, setIsEnabled] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [actionType, setActionType] = useState(""); // "logout" or "delete"
   const navigation = useNavigation();
+
   const toggleSwitch = () => setIsEnabled((prev) => !prev);
 
-  // Dummy user data
-  const user = {
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    profilePicture: "https://randomuser.me/api/portraits/women/65.jpg",
-  };
+const handleConfirm = () => {
+  console.log("Confirmed action:", actionType);
+  setShowModal(false);
+
+  navigation.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    })
+  );
+};
+
+
 
   return (
     <View style={styles.container}>
@@ -41,10 +53,13 @@ const Profile = () => {
       </View>
 
       <View style={styles.profileCard}>
-        <Image source={{ uri: user.profilePicture }} style={styles.profileImage} />
+        <Image
+          source={{ uri: "https://randomuser.me/api/portraits/women/65.jpg" }}
+          style={styles.profileImage}
+        />
         <View style={styles.details}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>Jane Smith</Text>
+          <Text style={styles.email}>jane.smith@example.com</Text>
           <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
             <Text style={styles.updateText}>Update Information</Text>
           </TouchableOpacity>
@@ -55,7 +70,7 @@ const Profile = () => {
       </View>
 
       <View style={styles.biggerContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("CreditCardDetailScreen")}>
+        <TouchableOpacity onPress={() => navigation.navigate("CreditCard")}>
           <View style={styles.smallContainer}>
             <CardSVG width={28} height={28} />
             <Text style={styles.smallContainerText}>Card Details</Text>
@@ -71,7 +86,7 @@ const Profile = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("NotificationSetting")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Notification_Setting")}>
           <View style={styles.smallContainer}>
             <NewBellSVG width={28} height={28} />
             <Text style={styles.smallContainerText}>Notification Settings</Text>
@@ -99,7 +114,7 @@ const Profile = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("TermsScreen")}>
+        <TouchableOpacity onPress={() => navigation.navigate("TermScreen")}>
           <View style={styles.smallContainer}>
             <TermsSVG width={28} height={28} />
             <Text style={styles.smallContainerText}>Terms & Conditions</Text>
@@ -109,19 +124,48 @@ const Profile = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            setActionType("logout");
+            setShowModal(true);
+          }}
+        >
           <View style={styles.buttonContent}>
             <LogoutSVG width={24} height={24} />
             <Text style={styles.buttonText}>Logout</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setActionType("delete");
+            setShowModal(true);
+          }}
+        >
           <Text style={styles.belowText}>Delete Account</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Confirmation Modal */}
+      <CustomMessageModal
+        visible={showModal}
+        message={
+          actionType === "logout"
+            ? "Are you sure you want to logout?"
+            : "Are you sure you want to delete your account?"
+        }
+        onClose={() => setShowModal(false)}
+       onYesClick={handleConfirm}
+        icon="alert-circle"
+        buttonNumbers={2}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f5f5f5", padding: 16 },

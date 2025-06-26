@@ -17,6 +17,8 @@ A beautiful React Native application for event management with booking functiona
 - **Modern UI**: Clean, intuitive interface with smooth animations
 
 ## 📱 Screenshots
+| Welcome Screen | Customer_Home | Service_Provider_Home |
+ ![Welcome1](screenshots/Welcome1.png.jpeg) | ![Customer_Home](screenshots/Customer_Home.png.jpeg) | ![Service_Provider_Home](screenshots/Provider_Home.png.jpeg)
 
 | Booking Screen | Profile Screen | Services |
 |--------------|--------------|--------------|

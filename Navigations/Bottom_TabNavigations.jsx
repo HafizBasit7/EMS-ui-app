@@ -17,7 +17,7 @@ const Tab = createBottomTabNavigator();
 
 // Mock user data - replace this with your actual user management
 const MOCK_USER = {
-  type: "Provider", // Change to "Provider" to test provider flow
+  type: "Customer", // Change to "Provider" to test provider flow
   profilePicture: "https://example.com/profile.jpg" // Replace with default or mock image
 };
 

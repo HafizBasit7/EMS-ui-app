@@ -17,9 +17,11 @@ import EyeSVG from "../../../assets/SVG/EyeSVG.svg";
 import InDollarSVG from "../../../assets/SVG/InDollarSVG.svg";
 import CustomButton from "../../../CustomComponents/CustomButton";
 import CustomMessageModal from "../../../CustomComponents/CustomMessageModal";
+import { useNavigation } from "@react-navigation/native";
 import { GlobalStyles } from "../../../Styles/GlobalStyles";
 
 const OfferingJobClicked = () => {
+  const navigation = useNavigation();
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [yesclick, setyesclick] = useState(false);
@@ -27,6 +29,7 @@ const OfferingJobClicked = () => {
   const [icon, seticon] = useState("alert-circle");
   const [showModal, setShowModal] = useState(false);
   const [buttonNumber, setButtonNumber] = useState(1);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [userJobs, setUserJobs] = useState([
     {
@@ -75,10 +78,21 @@ const OfferingJobClicked = () => {
       return;
     }
 
+    // Show success message first
     setmessage("Offer sent successfully!");
     seticon("check-circle");
-    setShowModal(true);
+    setButtonNumber(1);
+    setShowSuccessModal(true);
     setyesclick(false);
+  };
+
+  const handleSuccessConfirm = () => {
+    setShowSuccessModal(false);
+    // Navigate to Home tab after success confirmation
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'TabNavigation', params: { screen: 'Home' } }],
+    });
   };
 
   return (
@@ -202,19 +216,31 @@ const OfferingJobClicked = () => {
           />
         </View>
 
+        {/* Confirmation Modal */}
         <CustomMessageModal
           buttonNumbers={buttonNumber}
           visible={showModal}
           message={message}
-          onYesClick={() => setyesclick(true)}
+          onYesClick={handleSave} // Will proceed to show success modal
           icon={icon}
           onClose={() => setShowModal(false)}
+        />
+
+        {/* Success Modal */}
+        <CustomMessageModal
+          buttonNumbers={1}
+          visible={showSuccessModal}
+          message={message}
+          onYesClick={handleSuccessConfirm}
+          icon={icon}
+          onClose={handleSuccessConfirm}
         />
       </View>
     </>
   );
 };
 
+// ... (keep your existing styles)
 const styles = StyleSheet.create({
   container: {
     flex: 1,

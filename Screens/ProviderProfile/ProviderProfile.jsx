@@ -199,7 +199,7 @@ export default function ProviderProfile({ route }) {
             <TouchableOpacity
               style={styles.rowOne}
               onPress={() =>
-                navigation.navigate("Review", {
+                navigation.navigate("ReviewScreen", {
                   providerId,
                   pic: dummyProvider.profilePicUrl,
                   name: dummyProvider.fullname,

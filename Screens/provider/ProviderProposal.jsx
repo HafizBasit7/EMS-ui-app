@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import UploadedSVG from "../../assets/SVG/UploadedSVG.svg";
 import { useNavigation } from "@react-navigation/native";
+import CustomMessageModal from "../../CustomComponents/CustomMessageModal"; // Import your custom modal
+import CustomButton from "../../CustomComponents/CustomButton"; // Import your custom button
 
 const ProviderProposal = () => {
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleAcceptOffer = () => {
+    setModalVisible(false);
+    navigation.navigate("paymentScreen"); // Make sure you have this screen in your navigation stack
+  };
 
   return (
     <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
@@ -19,7 +26,7 @@ const ProviderProposal = () => {
             />
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>Offer by John</Text>
+            <Text style={styles.userName}>Offer by Jane</Text>
             <Text style={styles.price}>$200</Text>
           </View>
         </View>
@@ -40,22 +47,29 @@ const ProviderProposal = () => {
 
       {/* Proposal Details */}
       <View style={styles.newContainer}>
-        <Text style={styles.newHeading}>Proposal Details</Text>
+        <Text style={styles.newHeading}>Proposal:</Text>
         <Text style={styles.newText}>
-          Mollit in laborum tempor Lorem incididunt irure. Aute eu ex ad sunt.
-          Pariatur sint culpa do incididunt eiusmod eiusmod culpa. laborum
-          tempor Lorem incididunt.Pariatur sint culpa do incididunt eiusmod
-          eiusmod culpa. laborum tempor Lorem incididunt.Mollit in laborum
-          tempor Lorem incididunt irure. Aute eu ex ad sunt. Pariatur sint culpa
-          do incididunt eiusmod eiusmod culpa.
+          Mollit in laborum tempor Lorem Incididunt irure. Aute eu ex ad sunt. Peridur sint culpa do incididunt eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt Peridur sint culpa do incididunt eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt Mollit in laborum tempor Lorem Incididunt Irure. Aute eu ex ad sunt. Peridur sint culpa do incididunt eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt Eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt Mollit in laborum tempor Lorem Incididunt Irure. Aute eu ex ad sunt. Peridur sint culpa do incididunt eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt Eiusmod eiusmod culpa. Laborum tempor Lorem Incididunt.
         </Text>
       </View>
 
-      {/* Attachments */}
-      <View style={styles.uploadedContainer}>
-        <Text style={styles.uploadedHeading}>Attachments:</Text>
-        <UploadedSVG style={styles.uploadedSVG} />
-      </View>
+      {/* Accept Offer Button */}
+       <CustomButton
+        title="Accept Offer"
+        onPress={() => setModalVisible(true)}
+        buttonStyle={styles.acceptButton}
+        textStyle={styles.acceptButtonText}
+      />
+
+      {/* Custom Message Modal */}
+      <CustomMessageModal
+        visible={modalVisible}
+        message="Are you sure you want to accept this offer?"
+        onClose={() => setModalVisible(false)}
+        buttonNumbers={2}
+        icon="alert-circle" // You can change this to any icon from MaterialCommunityIcons
+        onYesClick={handleAcceptOffer}
+      />
     </ScrollView>
   );
 };
@@ -152,22 +166,17 @@ const styles = StyleSheet.create({
     color: "#555",
     lineHeight: 22,
   },
-  uploadedContainer: {
-    padding: 16,
-    backgroundColor: "#F9F9F9",
+  acceptButton: {
+    backgroundColor: "#FF7235",
     borderRadius: 8,
-    marginBottom: 50,
+    padding: 16,
+    alignItems: "center",
+    marginVertical: 20,
   },
-  uploadedHeading: {
-    fontSize: 18,
+  acceptButtonText: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  uploadedSVG: {
-    width: 100,
-    height: 100,
-    alignSelf: "flex-start",
   },
 });
 

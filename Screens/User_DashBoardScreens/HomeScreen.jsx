@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   reviewCount: { marginLeft: 6, color: "#888", fontSize: 12 },
   profileButton: {
     marginTop: 8,
-    backgroundColor: "orange",
+    backgroundColor: "#FF7235",
     borderRadius: 10,
     alignItems: "center",
     alignSelf: "flex-start",

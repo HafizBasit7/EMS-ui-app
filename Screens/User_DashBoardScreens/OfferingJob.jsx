@@ -52,7 +52,8 @@ const OfferingJob = ({ route }) => {
   const [expandedJobId, setExpandedJobId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  const { providerId } = route.params;
+ const providerId = route?.params?.providerId || "mockProviderId"; // fallback value
+
 
   const toggleDescription = (jobId) => {
     setExpandedJobId((prev) => (prev === jobId ? null : jobId));

@@ -70,7 +70,7 @@ export default function BookingVerticalCard({ data, tab }) {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.button} 
-                onPress={() => navigation.navigate('GiveReview')}
+                onPress={() => navigation.navigate('GaveReview')}
               >
                 <Text style={styles.buttonText}>View Receipt</Text>
               </TouchableOpacity>
@@ -79,7 +79,7 @@ export default function BookingVerticalCard({ data, tab }) {
             <>
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: "#FEEEEB" }]}
-                onPress={() => {}}
+                onPress={() => navigation.navigate('ViewReceipt')}
               >
                 <Text style={[styles.buttonText, { color: "#E72D04" }]}>
                   View Receipt
@@ -87,7 +87,7 @@ export default function BookingVerticalCard({ data, tab }) {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.button} 
-                onPress={() => navigation.navigate('GiveReview')}
+                onPress={() => navigation.navigate('GaveReview')}
               >
                 <Text style={styles.buttonText}>Give Review</Text>
               </TouchableOpacity>

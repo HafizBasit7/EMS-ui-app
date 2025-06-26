@@ -1,27 +1,23 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-} from "react-native";
-import MyJobCustomActionSheet from "../../../CustomComponents/myjobs.js";
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
 
 const MessageScreenSecondHeader = () => {
   const [visible, setVisible] = useState(false);
+  const navigation = useNavigation();
+
+  const openSheet = () => {
+    setVisible(true);
+    navigation.navigate("OfferingJob");
+
+  };
 
   return (
     <View style={styles.secondHeader}>
-      <TouchableOpacity style={styles.offerButton} onPress={() => setVisible(true)}>
+      <TouchableOpacity style={styles.offerButton} onPress={openSheet}>
         <Text style={styles.offerText}>Offer a Job</Text>
       </TouchableOpacity>
-
-      {/* Static providerId used just for UI representation */}
-      <MyJobCustomActionSheet
-        isOpen={visible}
-        onClose={() => setVisible(false)}
-        providerId="static-provider-id"
-      />
+      {/*  💡 replace Alert above with a real ActionSheet if you add one later */}
     </View>
   );
 };
@@ -43,15 +39,11 @@ const styles = StyleSheet.create({
     borderColor: "#FF8A47",
     borderWidth: 1,
     width: "88%",
+    height: "70%",
     alignItems: "center",
     justifyContent: "center",
-    height: "70%",
   },
-  offerText: {
-    fontSize: 16,
-    color: "#FF7235",
-    fontWeight: "bold",
-  },
+  offerText: { fontSize: 16, color: "#FF7235", fontWeight: "bold" },
 });
 
 export default MessageScreenSecondHeader;

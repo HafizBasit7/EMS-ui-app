@@ -2,60 +2,60 @@ import React, { useState, useRef } from "react";
 import {
   View,
   TextInput,
-  StyleSheet,
   TouchableOpacity,
+  StyleSheet,
   FlatList,
   KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-import { BackHandler } from "react-native";          // ← poly-fill starts
-if (!BackHandler.removeEventListener) {
-  BackHandler.removeEventListener = () => {};
-}  
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-
-import MessageScreenHeader from "./MessageScreenHeader";
-import MessageScreenSecondHeader from "./MessageScreenSecondHeader";
-import MessageComponent from "./MessageComponent";
 import { GlobalStyles } from "../../../Styles/GlobalStyles";
 
-export default function MessageScreen({ route }) {
-  const navigation = useNavigation();
-  const { partnerName = "John Doe", partnerPic } = route.params ?? {};
+import MessageScreenHeader      from "./MessageScreenHeader";
+import MessageScreenSecondHeader from "./MessageScreenSecondHeader";
+import MessageComponent         from "./MessageComponent";
 
-  // ─── Chat State (dummy data) ──────────────────────────────────
-  const [chatMessages, setChatMessages] = useState([
+/* ── MANUALLY pick who you are ────────────────────────── */
+const CURRENT_USER = { userId: "u1", type: "Customer" }; // ⇦ change type to "Provider" or "Customer" when needed
+/* ─────────────────────────────────────────────────────── */
+
+export default function MessageScreen({ route, navigation }) {
+  const { partnerName, partnerPic, partnerId } = route.params;
+
+  // starter fake chat
+  const INITIAL_MESSAGES = [
     {
-      _id: "1",
-      messageBody: "Key=1234,OfferJob,price:15000,event:Wedding",
-      senderId: "user1",
-      createdAt: new Date().toISOString(),
+      _id: "m1",
+      senderId: partnerId,
+      messageBody: "Hi there, thanks for reaching out!",
+      createdAt: new Date(Date.now() - 1000 * 60 * 19),
     },
     {
-      _id: "2",
-      messageBody: "Thanks for the details. I’ll review the offer.",
-      senderId: "user2",
-      createdAt: new Date().toISOString(),
+      _id: "m2",
+      senderId: CURRENT_USER.userId,
+      messageBody: "Hello! I'm interested in your services.",
+      createdAt: new Date(Date.now() - 1000 * 60 * 15),
     },
-  ]);
+    {
+      _id: "m3",
+      senderId: partnerId,
+      messageBody: "Sure – let me send you an offer.\nKey=1234,OfferJob,price:5000,event:wedding",
+      createdAt: new Date(Date.now() - 1000 * 60 * 12),
+    },
+  ];
 
-  const [message, setMessage] = useState("");
-  const flatListRef = useRef(null);
-  // ──────────────────────────────────────────────────────────────
+  const [messages, setMessages] = useState(INITIAL_MESSAGES.reverse()); // newest at top
+  const [message, setMessage]   = useState("");
+  const flatListRef             = useRef(null);
 
-  const handleSend = () => {
-    const trimmed = message.trim();
-    if (!trimmed) return;
-
+  const sendNewMessage = () => {
+    if (!message.trim()) return;
     const newMsg = {
       _id: Date.now().toString(),
-      messageBody: trimmed,
-      senderId: "user1", // mock sender
-      createdAt: new Date().toISOString(),
+      senderId: CURRENT_USER.userId,
+      messageBody: message.trim(),
+      createdAt: new Date(),
     };
-
-    setChatMessages((prev) => [newMsg, ...prev]);
+    setMessages((prev) => [newMsg, ...prev]);
     setMessage("");
   };
 
@@ -67,36 +67,39 @@ export default function MessageScreen({ route }) {
         onPress={() => navigation.goBack()}
       />
 
-      <MessageScreenSecondHeader />
+      {/* second header only for Customers */}
+      {CURRENT_USER.type === "Customer" && <MessageScreenSecondHeader />}
 
-      <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: "white" }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        {/* Chat list */}
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "white" }} behavior="padding">
+        {/* chat */}
         <View style={styles.chatContainer}>
           <FlatList
             ref={flatListRef}
-            data={chatMessages}
-            renderItem={({ item }) => <MessageComponent message={item} />}
+            data={messages}
+            inverted   // newest at bottom visually
             keyExtractor={(item) => item._id}
-            inverted
+            renderItem={({ item }) => (
+              <MessageComponent
+                message={item}
+                currentUserId={CURRENT_USER.userId}
+              />
+            )}
             contentContainerStyle={styles.messageListContainer}
             showsVerticalScrollIndicator={false}
           />
         </View>
 
-        {/* Input row */}
+        {/* composer */}
         <View style={styles.inputSection}>
           <TextInput
             style={styles.textInput}
             placeholder="Type a message..."
             placeholderTextColor={GlobalStyles.colors.textSecondary}
+            multiline
             value={message}
             onChangeText={setMessage}
-            multiline
           />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <TouchableOpacity style={styles.sendButton} onPress={sendNewMessage}>
             <Ionicons
               name="send"
               size={24}
@@ -110,17 +113,8 @@ export default function MessageScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  chatContainer: {
-    flex: 1,
-    backgroundColor: GlobalStyles.colors.primaryLight,
-  },
-  messageListContainer: {
-    paddingTop: 8,
-    paddingBottom: "50%",
-    paddingHorizontal: 16,
-    backgroundColor: "white",
-    minHeight: "100%",
-  },
+  chatContainer:        { flex: 1, backgroundColor: GlobalStyles.colors.primaryLight },
+  messageListContainer: { paddingTop: 8, paddingBottom: "50%", paddingHorizontal: 16 },
   inputSection: {
     flexDirection: "row",
     alignItems: "center",
@@ -133,18 +127,17 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     minHeight: 60,
-    maxHeight: 100,
+    maxHeight: 120,
     borderColor: GlobalStyles.colors.border,
     borderWidth: 0.2,
     borderRadius: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     color: GlobalStyles.colors.text,
   },
   sendButton: {
     backgroundColor: GlobalStyles.colors.buttonBackground,
     padding: 10,
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    marginLeft: 6,
   },
 });
